@@ -8,7 +8,9 @@ public class SimpleRSA {
     }
 
     public long encrypt(long message){
-        return NumberTheoryEngine.modularExponentiation(message, e, n);
+        if (message < n) return NumberTheoryEngine.modularExponentiation(message, e, n);
+        System.out.println("Message too large.");
+        return 0;
     }
 
     public long decrypt(long ciphertext){
