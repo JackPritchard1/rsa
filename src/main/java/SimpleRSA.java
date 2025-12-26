@@ -1,19 +1,37 @@
+import java.security.SecureRandom;
+import java.math.BigInteger;
+
 public class SimpleRSA {
-    private final long n, e, d;
+    private final BigInteger n, e, d;
 
-    public SimpleRSA(long p, long q){
-        this.n = p * q;
-        this.e = 65537;
-        this.d = NumberTheoryEngine.modularInverse(e, (p-1)*(q-1));
+    public SimpleRSA(){
+
+        SecureRandom random = new SecureRandom();
+        BigInteger p = BigInteger.probablePrime(1024, random);
+        BigInteger q;
+        do {
+            q = BigInteger.probablePrime(1024, random);
+        } while (p.equals(q));
+        this.n = p.multiply(q);
+        this.e = BigInteger.valueOf(65537);
+        this.d = NumberTheoryEngine.modularInverse(e, ((p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE)))));
     }
 
-    public long encrypt(long message){
-        if (message < n) return NumberTheoryEngine.modularExponentiation(message, e, n);
+    public BigInteger encrypt(BigInteger message){
+        if (message.compareTo(n) < 0) return NumberTheoryEngine.modularExponentiation(message, e, n);
         System.out.println("Message too large.");
-        return 0;
+        return BigInteger.ZERO;
     }
 
-    public long decrypt(long ciphertext){
+    public BigInteger decrypt(BigInteger ciphertext){
         return NumberTheoryEngine.modularExponentiation(ciphertext, d, n);
+    }
+
+    public static BigInteger textToInt(String message){
+        return new BigInteger(message.getBytes());
+    }
+
+    public static String intToText(BigInteger message){
+        return new String(message.toByteArray());
     }
 }

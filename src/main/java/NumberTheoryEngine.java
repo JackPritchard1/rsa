@@ -3,40 +3,38 @@ import java.math.BigInteger;
 public class NumberTheoryEngine {
     private NumberTheoryEngine(){}
 
-    public static BezoutResult extendedGCD(long a, long b){
-        long x = 0, x_prev = 1;
-        long y = 1, y_prev = 0;
+    public static BezoutResult extendedGCD(BigInteger a, BigInteger b){
+        BigInteger x = BigInteger.valueOf(0);
+        BigInteger x_prev = BigInteger.valueOf(1);
+        BigInteger y = BigInteger.valueOf(1);
+        BigInteger y_prev = BigInteger.valueOf(0);
 
-        while (b != 0){
-            long q = a / b;
+        while (!b.equals(BigInteger.ZERO)){
+            BigInteger[] dr = a.divideAndRemainder(b);
+            BigInteger q = dr[0];
+            a = b;
+            b = dr[1];
 
-            long temp_b = b;
-            b = a % b;
-            a = temp_b;
-
-            long x_temp = x;
-            x = x_prev - q * x;
+            BigInteger x_temp = x;
+            x = x_prev.subtract(q.multiply(x));
             x_prev = x_temp;
 
-            long y_temp = y;
-            y = y_prev - q * y;
+            BigInteger y_temp = y;
+            y = y_prev.subtract(q.multiply(y));
             y_prev = y_temp;
 
         }
         return new BezoutResult(a, x_prev, y_prev);
     }
 
-    public static long modularInverse(long a, long n){
+    public static BigInteger modularInverse(BigInteger a, BigInteger n){
         BezoutResult result = extendedGCD(a, n);
-        if (result.gcd() != 1) throw new ArithmeticException("a and n are not coprime.");
-        return ((result.x() + n) % n);
+        if (!result.gcd().equals(BigInteger.ONE)) throw new ArithmeticException("a and n are not coprime.");
+        return ((result.x().add(n)).mod(n));
 
     }
 
-    public static long modularExponentiation(long b, long e, long m) {
-        BigInteger base = BigInteger.valueOf(b);
-        BigInteger exp = BigInteger.valueOf(e);
-        BigInteger mod = BigInteger.valueOf(m);
+    public static BigInteger modularExponentiation(BigInteger base, BigInteger exp, BigInteger mod) {
         BigInteger result = BigInteger.ONE; // Equivalent to long result = 1
         base = base.mod(mod); // Initial reduction
         while (exp.signum() > 0) { // while exponent > 0
@@ -49,7 +47,7 @@ public class NumberTheoryEngine {
             // exp /= 2 (shift right)
             exp = exp.shiftRight(1);
         }
-        return result.longValue();
+        return result;
     }
 
 
