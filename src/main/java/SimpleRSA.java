@@ -4,6 +4,12 @@ import java.math.BigInteger;
 public class SimpleRSA {
     private final BigInteger n, e, d;
 
+    /** Initialises RSA algorithm
+     * n = product of two large primes
+     * e = 65537 - must be smaller than n and coprime to n (public key)
+     * d = 
+     *
+     */
     public SimpleRSA(){
 
         SecureRandom random = new SecureRandom();
